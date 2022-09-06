@@ -1,0 +1,74 @@
+service: ajnacreator
+# app and org for use with dashboard.serverless.com
+app: ajnacreator
+org: asidipta
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  runtime: nodejs12.x
+  stage: dev
+  region: ap-south-1
+  
+# you can add statements to the Lambda function's IAM Role here
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Resource: '*'
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:CreateTable
+
+functions:
+  writeToDB:
+    handler: Controllers/functions/users/createUser.main
+    events:
+      - http:
+          path: addUser
+          method: POST
+          cors: true
+  getAllUsers:
+    handler: Controllers/functions/users/getAllUsers.main
+    events:
+      - http:
+          path: getAll
+          method: GET
+          cors: true
+  getUserById:
+    handler: Controllers/functions/users/getUserById.main
+    events:
+      - http:
+          path: getOne
+          method: GET
+          cors: true
+  updateUser:
+    handler: Controllers/functions/users/updateUser.main
+    events:
+      - http:
+          path: update
+          method: PUT
+          cors: true
+  deleteUser:
+    handler: Controllers/functions/users/deleteUser.main
+    events:
+      - http:
+          path: delete
+          method: DELETE
+          cors: true
+package:
+  patterns:
+    - '!.git/**'
+    - '!test/**'
+    - '!e2e/**'
+    - '!src/**'
